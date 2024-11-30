@@ -1,12 +1,3 @@
-/* 
----------- Linear Algebra Program -----------
-Student ID: 6788236
-Name: Zwe Nyan Zaw
-Surname: Zaw
-Section: 3 
--------------------------------------------
-*/
-
 #include <stdio.h>
 #include <math.h>
 
