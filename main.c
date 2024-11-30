@@ -1,3 +1,12 @@
+/* 
+---------- Linear Algebra Program -----------
+Student ID: 6788236
+Name: Zwe Nyan Zaw
+Surname: Zaw
+Section: 3 
+-------------------------------------------
+*/
+
 #include <stdio.h>
 #include <math.h>
 
@@ -8,6 +17,8 @@ struct Point {
     float y;
     float z;
 };
+
+void input_two_points(struct Point points[]);
 
 struct Vector {
     float x_component;
@@ -50,6 +61,19 @@ int main(void) {
     } while (option != 0);
 
     return 0;
+}
+
+void input_two_points(struct Point points[]) {
+    char desc[2][30] = {
+        "first",
+        "second"
+    };
+
+    for (int i = 0; i < 2; i++) {
+        printf("Please input %s point (x,y,z): ", desc[i]);
+        scanf("%f %f %f", &points[i].x, &points[i].y, &points[i].z);
+    }
+    printf("===============================================\n");
 }
 
 struct Vector get_vector(struct Point p, struct Point q) {
@@ -102,18 +126,10 @@ void choose_option(int *first_time, int *option, char options[N_OPTIONS][49+1]) 
 
 void magnitude_of_vector() {
     struct Point points[2];
-    char desc[2][30] = {
-        "first",
-        "second"
-    };
 
-    for (int i = 0; i < 2; i++) {
-        printf("Please input %s point (x,y,z): ", desc[i]);
-        scanf("%f %f %f", &points[i].x, &points[i].y, &points[i].z);
-    }
-
+    input_two_points(points);
     struct Vector a = get_vector(points[0], points[1]);
-    printf("===============================================\n");
+
     printf("Here is the vector: ");
     print_vector(a);
     printf("\n");
