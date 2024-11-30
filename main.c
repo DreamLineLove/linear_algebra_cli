@@ -19,7 +19,7 @@ struct Vector {
 
 struct Vector get_vector(struct Object p, struct Object q);
 
-void print_vector(struct Vector a);
+void print_vector(struct Vector a, char front, char back);
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][49+1]);
 
@@ -80,8 +80,8 @@ struct Vector get_vector(struct Object p, struct Object q) {
     return a;
 }
 
-void print_vector(struct Vector a) {
-    printf("< %.1f, %.1f, %.1f >", a.x_component, a.y_component, a.z_component);
+void print_vector(struct Vector a, char front, char back) {
+    printf("%c%.1f, %.1f, %.1f%c", front, a.x_component, a.y_component, a.z_component, back);
 }
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][49+1]) {
@@ -134,7 +134,7 @@ void magnitude_of_vector() {
 
     struct Vector a = get_vector(points[0], points[1]);
     printf("Here is the vector: ");
-    print_vector(a);
+    print_vector(a, '<', '>');
     printf("\n");
 
     printf("Magnitude of these vectors: %.2f\n", sqrt(pow(a.x_component, 2) + pow(a.y_component, 2) + pow(a.z_component, 2)));
