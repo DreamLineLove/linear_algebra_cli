@@ -3,13 +3,13 @@
 
 #define N_OPTIONS 8
 
-struct Point {
+struct Object {
     float x;
     float y;
     float z;
 };
 
-void input_two_points(struct Point points[]);
+void input_two_objects(struct Object objects[], char *name);
 
 struct Vector {
     float x_component;
@@ -17,11 +17,13 @@ struct Vector {
     float z_component;
 };
 
-struct Vector get_vector(struct Point p, struct Point q);
+struct Vector get_vector(struct Object p, struct Object q);
 
 void print_vector(struct Vector a);
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][49+1]);
+
+void dot_product();
 
 void magnitude_of_vector();
  
@@ -42,6 +44,9 @@ int main(void) {
         choose_option(&first_time, &option, options);
         
         switch (option) {
+            case 6:
+            dot_product();
+            break;
             case 8:
             magnitude_of_vector();
             break;
@@ -54,20 +59,20 @@ int main(void) {
     return 0;
 }
 
-void input_two_points(struct Point points[]) {
+void input_two_objects(struct Object objects[], char *name) {
     char desc[2][30] = {
         "first",
         "second"
     };
 
     for (int i = 0; i < 2; i++) {
-        printf("Please input %s point (x,y,z): ", desc[i]);
-        scanf("%f %f %f", &points[i].x, &points[i].y, &points[i].z);
+        printf("Please input %s %s (x,y,z): ", desc[i], name);
+        scanf("%f %f %f", &objects[i].x, &objects[i].y, &objects[i].z);
     }
     printf("===============================================\n");
 }
 
-struct Vector get_vector(struct Point p, struct Point q) {
+struct Vector get_vector(struct Object p, struct Object q) {
     struct Vector a;
     a.x_component = p.x - q.x;
     a.y_component = p.y - q.y;
@@ -115,12 +120,19 @@ void choose_option(int *first_time, int *option, char options[N_OPTIONS][49+1]) 
     }
 }
 
+void dot_product() {
+    struct Object vectors[2];
+    input_two_objects(vectors, "vector");
+
+    printf("Dot product of these vectors: %.2f\n", vectors[0].x * vectors[1].x + vectors[0].y * vectors[1].y + vectors[0].z * vectors[1].z );
+    printf("===============================================\n");
+}
+
 void magnitude_of_vector() {
-    struct Point points[2];
+    struct Object points[2];
+    input_two_objects(points, "point");
 
-    input_two_points(points);
     struct Vector a = get_vector(points[0], points[1]);
-
     printf("Here is the vector: ");
     print_vector(a);
     printf("\n");
