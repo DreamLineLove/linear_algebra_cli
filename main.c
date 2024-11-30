@@ -25,6 +25,8 @@ void choose_option(int *first_time, int *option, char options[N_OPTIONS][49+1]);
 
 void dot_product();
 
+void cross_product();
+
 void magnitude_of_vector();
  
 int main(void) {
@@ -46,6 +48,9 @@ int main(void) {
         switch (option) {
             case 6:
             dot_product();
+            break;
+            case 7:
+            cross_product();
             break;
             case 8:
             magnitude_of_vector();
@@ -126,6 +131,27 @@ void dot_product() {
 
     printf("Dot product of these vectors: %.2f\n", vectors[0].x * vectors[1].x + vectors[0].y * vectors[1].y + vectors[0].z * vectors[1].z );
     printf("===============================================\n");
+}
+
+void cross_product() {
+    struct Object vectors[2];
+    input_two_objects(vectors, "vector");
+
+    struct Vector a;
+    a.x_component = vectors[0].y * vectors[1].z - vectors[0].z * vectors[1].y;
+    a.y_component = vectors[0].z * vectors[1].x - vectors[0].x * vectors[1].z;
+    a.z_component = vectors[0].x * vectors[1].y - vectors[0].y * vectors[1].x;
+
+    printf("Cross product of these vectors:\n");
+    if (a.x_component >= 0) printf("+");
+    printf("%.1fi", a.x_component);
+    if (a.y_component >= 0) printf("+");
+    printf("%.1fj", a.y_component);
+    if (a.z_component >= 0) printf("+");
+    printf("%.1fk\n", a.z_component);
+
+    print_vector(a, '(', ')');
+    printf("\n===============================================\n");
 }
 
 void magnitude_of_vector() {
