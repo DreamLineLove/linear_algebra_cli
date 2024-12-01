@@ -22,6 +22,13 @@ struct Vector get_vector(struct Object p, struct Object q);
 
 void print_vector(struct Vector a, char front, char back);
 
+// struct Equation {
+//     float x_coefficient;;
+//     float y_coefficient;
+//     float z_coefficient;
+//     float constant;
+// };
+
 void input_three_equations(float e[3][4]);
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]);
@@ -96,6 +103,14 @@ void print_vector(struct Vector a, char front, char back) {
     printf("%c%.1f, %.1f, %.1f%c", front, a.x_component, a.y_component, a.z_component, back);
 }
 
+// void input_three_equations(struct Equation e[]) {
+//     for (int i = 0; i < 2; i++) {
+//         printf("Please input equation No.%d (x,y,z, total): ", i);
+//         scanf("%f %f %f %f", &e[i].x_coefficient, &e[i].y_coefficient, &e[i].z_coefficient, &e[i].constant);
+//     }
+//     printf("===============================================\n");
+// }
+
 void input_three_equations(float e[3][4]) {
     for (int i = 0; i < 3; i++) {
         printf("Please input equation No.%d (x,y,z, total): ", i);
@@ -141,9 +156,22 @@ void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR
 }
 
 void gaussian_elimination() {
+    // struct Equation equations[3];
+    // input_three_equations(equations);
+    //
+    // for (int i = 0; i < 2; i++) {
+    //     if (equations[i].x)
+    // }
 
     float equations[3][4];
     input_three_equations(equations);
+
+    // for (int i = 0; i < 3; i++) {
+    //     for (int j = 0; j < 4; j++) {
+    //         printf("%.1f ", equations[i][j]);
+    //     }
+    //     printf("\n");
+    // }
 
     for (int i = 0; i < 3; i++) {
         if (equations[i][i] == 0) {
@@ -161,6 +189,7 @@ void gaussian_elimination() {
 
         if (equations[i][i] != 0) {
             float multiple = equations[i][i];
+            // equations[i][i] = equations[i][i] / equations[i][i];
             for (int n = i; n < 4; n++) {
                 equations[i][n] = equations[i][n] / multiple;
             }
@@ -171,13 +200,14 @@ void gaussian_elimination() {
 
                 for (int m = i; m < 4; m++) {
                     equations[l][m] = equations[l][m] + (equations[i][m] * multiple);
+                    // printf("%.1f ", equations[l][m]);
                 }
             }
         }
     }
     
-    printf("Here are the equations after using Gaussian Elimination:\n");
-    char variable_matrix[3] = {'x', 'y', 'z'};
+    printf("Here are the augmented matrix after using Gaussian Elimination:\n");
+    char variable_mat[3] = {'x', 'y', 'z'};
     for (int i = 0; i < 3; i++) {
         int j, count = 0;
         for (j = 0; j < 3; j++) {
@@ -187,20 +217,20 @@ void gaussian_elimination() {
                     printf("%.1f", equations[i][j]);
                 }
                 count++;
-                printf("%c", variable_matrix[j]);
+                printf("%c", variable_mat[j]);
             }
         }
         printf(" = %.1f\n", equations[i][j]);
     }
     printf("===============================================\n");
+    // printf("\n");
 
-    printf("Here is the augmented matrix after using Gaussian Elimination:\n");
-    for (int i = 0; i < 3; i++) {
-        int j;
-        for (j = 0; j < 3; j++) printf("%.1f ", equations[i][j]);
-        printf("| %.1f\n", equations[i][j]);
-    }
-    printf("===============================================\n");
+    // for (int i = 0; i < 3; i++) {
+    //     for (int j = 0; j < 4; j++) {
+    //         printf("%.1f ", equations[i][j]);
+    //     }
+    //     printf("\n");
+    // }
 }
 
 void dot_product() {
