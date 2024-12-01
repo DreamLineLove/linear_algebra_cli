@@ -24,6 +24,8 @@ void print_vector(struct Vector a, char front, char back);
 
 void input_three_equations(float e[3][4]);
 
+void print_solution(float x, float y, float z);
+
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]);
 
 void gaussian_elimination();
@@ -101,6 +103,12 @@ void input_three_equations(float e[3][4]) {
         printf("Please input equation No.%d (x,y,z, total): ", i);
         scanf("%f %f %f %f", &e[i][0], &e[i][1], &e[i][2], &e[i][3]);
     }
+    printf("===============================================\n");
+}
+
+void print_solution(float x, float y, float z) {
+    printf("Here is the solution of these equations:\n");
+    printf("(x,y,z) = (%.1f,%.1f,%.1f)\n", x, y, z);
     printf("===============================================\n");
 }
 
@@ -201,6 +209,12 @@ void gaussian_elimination() {
         printf("| %.1f\n", equations[i][j]);
     }
     printf("===============================================\n");
+
+    float x, y, z;
+    z = equations[2][3];
+    y = equations[1][3] - (equations[1][2] * z);
+    x = equations[0][3] - (equations[0][1] * y) - (equations[0][2] * z);
+    print_solution(x, y, z);
 }
 
 void dot_product() {
