@@ -28,7 +28,9 @@ void print_solution(float x, float y, float z);
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]);
 
-void gaussian_elimination();
+void gaussian_elimination(float output[3][4], int called_in_main);
+
+void gauss_jordan_elimination();
 
 void dot_product();
 
@@ -51,10 +53,14 @@ int main(void) {
 
     do {
         choose_option(&first_time, &option, options);
+        float equations[3][4];
         
         switch (option) {
             case 1:
-            gaussian_elimination();
+            gaussian_elimination(equations, 1);
+            break;
+            case 2:
+            gauss_jordan_elimination();
             break;
             case 6:
             dot_product();
@@ -148,7 +154,7 @@ void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR
     }
 }
 
-void gaussian_elimination() {
+void gaussian_elimination(float output[3][4], int called_in_main) {
 
     float equations[3][4];
     input_three_equations(equations);
@@ -184,7 +190,52 @@ void gaussian_elimination() {
         }
     }
     
-    printf("Here are the equations after using Gaussian Elimination:\n");
+    if (called_in_main) {
+        printf("Here are the equations after using Gaussian Elimination:\n");
+        char variable_matrix[3] = {'x', 'y', 'z'};
+        for (int i = 0; i < 3; i++) {
+            int j, count = 0;
+            for (j = 0; j < 3; j++) {
+                if (equations[i][j] != 0) {
+                    if (count != 0 && equations[i][j] > 0) printf("+");
+                    if (equations[i][j] != 1) { 
+                        printf("%.1f", equations[i][j]);
+                    }
+                    count++;
+                    printf("%c", variable_matrix[j]);
+                }
+            }
+            printf(" = %.1f\n", equations[i][j]);
+        }
+        printf("===============================================\n");
+
+        printf("Here is the augmented matrix after using Gaussian Elimination:\n");
+        for (int i = 0; i < 3; i++) {
+            int j;
+            for (j = 0; j < 3; j++) printf("%.1f ", equations[i][j]);
+            printf("| %.1f\n", equations[i][j]);
+        }
+        printf("===============================================\n");
+
+        float x, y, z;
+        z = equations[2][3];
+        y = equations[1][3] - (equations[1][2] * z);
+        x = equations[0][3] - (equations[0][1] * y) - (equations[0][2] * z);
+        print_solution(x, y, z);
+    } else {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                output[i][j] = equations[i][j];
+            }
+        }
+    }
+}
+
+void gauss_jordan_elimination() {
+
+    float equations[3][4];
+    gaussian_elimination(equations, 0);
+    printf("Here are the equations after using Gaussian Elimination: (first stage)\n");
     char variable_matrix[3] = {'x', 'y', 'z'};
     for (int i = 0; i < 3; i++) {
         int j, count = 0;
@@ -201,20 +252,43 @@ void gaussian_elimination() {
         printf(" = %.1f\n", equations[i][j]);
     }
     printf("===============================================\n");
-
-    printf("Here is the augmented matrix after using Gaussian Elimination:\n");
+    for (int c = 2; c > 0; c--) {
+        for (int r = c - 1; r >= 0; r--) {
+            float multiple = -(equations[r][c]);
+            for (int s = c; s < 4; s++) {
+                equations[r][s] = equations[r][s] + (multiple * equations[c][s]);
+            }
+        }
+    }
+    
+    // for (int i = 1; i > 0; i--) {
+    //     int j = i + 1;
+    //     float multiple = -(equations[j][j]);
+    //     for (int k = j; k < 4; k++) {
+    //         printf("%.1f ", equations[j][k]);
+    //         printf("multiple * below = %.1f * %.1f ", multiple, equations[i+1][k]);
+    //         equations[j][k] = equations[j][k] + (multiple * equations[i+1][k]);
+    //         printf("%.1f \n", equations[j][k]);
+    //     }
+    // }
+    printf("Here are the equations after using Gauss-Jordan Elimination:\n");
     for (int i = 0; i < 3; i++) {
-        int j;
-        for (j = 0; j < 3; j++) printf("%.1f ", equations[i][j]);
-        printf("| %.1f\n", equations[i][j]);
+        int j, count = 0;
+        for (j = 0; j < 3; j++) {
+            if (equations[i][j] != 0) {
+                if (count != 0 && equations[i][j] > 0) printf("+");
+                if (equations[i][j] != 1) { 
+                    printf("%.1f", equations[i][j]);
+                }
+                count++;
+                printf("%c", variable_matrix[j]);
+            }
+        }
+        printf(" = %.1f\n", equations[i][j]);
     }
     printf("===============================================\n");
 
-    float x, y, z;
-    z = equations[2][3];
-    y = equations[1][3] - (equations[1][2] * z);
-    x = equations[0][3] - (equations[0][1] * y) - (equations[0][2] * z);
-    print_solution(x, y, z);
+    print_solution(equations[0][3], equations[1][3], equations[2][3]);
 }
 
 void dot_product() {
