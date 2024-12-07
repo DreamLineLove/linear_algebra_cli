@@ -32,6 +32,8 @@ void gaussian_elimination(float output[3][4], int called_in_main);
 
 void gauss_jordan_elimination();
 
+void determinant();
+
 void dot_product();
 
 void cross_product();
@@ -61,6 +63,9 @@ int main(void) {
             break;
             case 2:
             gauss_jordan_elimination();
+            break;
+            case 3:
+            determinant();
             break;
             case 6:
             dot_product();
@@ -245,16 +250,6 @@ void gauss_jordan_elimination() {
         }
     }
     
-    // for (int i = 1; i > 0; i--) {
-    //     int j = i + 1;
-    //     float multiple = -(equations[j][j]);
-    //     for (int k = j; k < 4; k++) {
-    //         printf("%.1f ", equations[j][k]);
-    //         printf("multiple * below = %.1f * %.1f ", multiple, equations[i+1][k]);
-    //         equations[j][k] = equations[j][k] + (multiple * equations[i+1][k]);
-    //         printf("%.1f \n", equations[j][k]);
-    //     }
-    // }
     printf("Here are the equations after using Gauss-Jordan Elimination:\n");
     for (int i = 0; i < 3; i++) {
         int j, count = 0;
@@ -273,6 +268,46 @@ void gauss_jordan_elimination() {
     printf("===============================================\n");
 
     print_solution(equations[0][3], equations[1][3], equations[2][3]);
+}
+
+void determinant() {
+    int order;
+    printf("Please input size of matrix (1-4): ");
+    scanf("%d", &order);
+    float determinant;
+
+    if (order <= 1) {
+        printf("Please input number: ");
+        scanf("%f", &determinant);
+        printf("%.2f\n", determinant);
+    } else {
+        float matrix[order][order];
+        for (int r = 0; r < order; r++) {
+            for (int c = 0; c < order; c++) {
+                printf("Please input number in index [%d][%d]: ", r, c);
+                scanf("%f", &matrix[r][c]);
+            }
+        }
+        if (order == 2) {
+            float main_diagonal = matrix[0][0] * matrix[1][1];
+            float other_diagonal = -(matrix[0][1] * matrix[1][0]);
+            determinant = main_diagonal + other_diagonal;
+        }
+        if (order == 3) {
+            float down_sweep = matrix[0][0] * matrix[1][1] * matrix[2][2] + matrix[0][1] * matrix[1][2] * matrix[2][0] + matrix[0][2] * matrix[1][0] * matrix[2][1];
+            float up_sweep = -(matrix[0][2] * matrix[1][1] * matrix[2][0]) - (matrix[0][0] * matrix[1][2] * matrix[2][1]) -(matrix[0][1] * matrix[1][0] * matrix[2][2]);
+            determinant = up_sweep + down_sweep;
+        }
+        for (int r = 0; r < order; r++) {
+            for (int c = 0; c < order; c++) {
+                printf("%.2f ", matrix[r][c]);
+            }
+            printf("\n");
+        }
+    }
+    printf("===============================================\n");
+    printf("Determinant of this matrix: %.2f\n", determinant);
+    printf("===============================================\n");
 }
 
 void dot_product() {
