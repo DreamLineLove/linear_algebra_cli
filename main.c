@@ -235,23 +235,7 @@ void gauss_jordan_elimination() {
 
     float equations[3][4];
     gaussian_elimination(equations, 0);
-    printf("Here are the equations after using Gaussian Elimination: (first stage)\n");
     char variable_matrix[3] = {'x', 'y', 'z'};
-    for (int i = 0; i < 3; i++) {
-        int j, count = 0;
-        for (j = 0; j < 3; j++) {
-            if (equations[i][j] != 0) {
-                if (count != 0 && equations[i][j] > 0) printf("+");
-                if (equations[i][j] != 1) { 
-                    printf("%.1f", equations[i][j]);
-                }
-                count++;
-                printf("%c", variable_matrix[j]);
-            }
-        }
-        printf(" = %.1f\n", equations[i][j]);
-    }
-    printf("===============================================\n");
     for (int c = 2; c > 0; c--) {
         for (int r = c - 1; r >= 0; r--) {
             float multiple = -(equations[r][c]);
