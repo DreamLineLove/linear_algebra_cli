@@ -32,7 +32,7 @@ void gaussian_elimination(float output[3][4], int called_in_main);
 
 void gauss_jordan_elimination();
 
-void determinant();
+float determinant_calculation(int called_in_main, float matrix[3][3]);
 
 void dot_product();
 
@@ -56,6 +56,7 @@ int main(void) {
     do {
         choose_option(&first_time, &option, options);
         float equations[3][4];
+        float matrix[3][3];
         
         switch (option) {
             case 1:
@@ -65,7 +66,7 @@ int main(void) {
             gauss_jordan_elimination();
             break;
             case 3:
-            determinant();
+            determinant_calculation(1, matrix);
             break;
             case 6:
             dot_product();
@@ -270,22 +271,33 @@ void gauss_jordan_elimination() {
     print_solution(equations[0][3], equations[1][3], equations[2][3]);
 }
 
-void determinant() {
+float determinant_calculation(int called_in_main, float minor[3][3]) {
     int order;
-    printf("Please input size of matrix (1-4): ");
-    scanf("%d", &order);
+    if (called_in_main) {
+        printf("Please input size of matrix (1-4): ");
+        scanf("%d", &order);
+    } else {
+        order = 3;
+    }
     float determinant;
 
     if (order <= 1) {
         printf("Please input number: ");
         scanf("%f", &determinant);
-        printf("%.2f\n", determinant);
     } else {
         float matrix[order][order];
-        for (int r = 0; r < order; r++) {
-            for (int c = 0; c < order; c++) {
-                printf("Please input number in index [%d][%d]: ", r, c);
-                scanf("%f", &matrix[r][c]);
+        if (called_in_main) {
+            for (int r = 0; r < order; r++) {
+                for (int c = 0; c < order; c++) {
+                    printf("Please input number in index [%d][%d]: ", r, c);
+                    scanf("%f", &matrix[r][c]);
+                }
+            }
+        } else {
+            for (int r = 0; r < order; r++) {
+                for (int c = 0; c < order; c++) {
+                    matrix[r][c] = minor[r][c];
+                }
             }
         }
         if (order == 2) {
@@ -298,16 +310,44 @@ void determinant() {
             float up_sweep = -(matrix[0][2] * matrix[1][1] * matrix[2][0]) - (matrix[0][0] * matrix[1][2] * matrix[2][1]) -(matrix[0][1] * matrix[1][0] * matrix[2][2]);
             determinant = up_sweep + down_sweep;
         }
-        for (int r = 0; r < order; r++) {
-            for (int c = 0; c < order; c++) {
-                printf("%.2f ", matrix[r][c]);
+        if (order == 4) {
+            float cofactors[4];
+            for (int i = 0; i < 4; i++) {
+                float multiple = (i % 2 == 0) ? 1.0 : -1.0;
+                float minor[3][3];
+                int l = 0, m = 0;
+                for (int j = 0; j < 4; j++) {
+                    if (j == 0) continue;
+                    for (int k = 0; k < 4; k++) {
+                        if (k == i) continue;
+                        minor[l][m] = matrix[j][k];
+                        m++;
+                    }
+                    l++;
+                    m=0;
+                }
+                cofactors[i] = matrix[0][i] * multiple * determinant_calculation(0, minor);
             }
-            printf("\n");
+            determinant = 0;
+            for (int i = 0; i < 4; i++) {
+                determinant += cofactors[i];
+            }
+        }
+        if (called_in_main) {
+            for (int r = 0; r < order; r++) {
+                for (int c = 0; c < order; c++) {
+                    printf("%.2f ", matrix[r][c]);
+                }
+                printf("\n");
+            }
         }
     }
-    printf("===============================================\n");
-    printf("Determinant of this matrix: %.2f\n", determinant);
-    printf("===============================================\n");
+    if (called_in_main) {
+        printf("===============================================\n");
+        printf("Determinant of this matrix: %.2f\n", determinant);
+        printf("===============================================\n");
+    }
+    return determinant;
 }
 
 void dot_product() {
