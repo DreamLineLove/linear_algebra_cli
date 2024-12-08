@@ -26,7 +26,9 @@ void input_three_equations(float e[3][4]);
 
 void print_solution(float x, float y, float z);
 
-void scalar_multiplication(float scalar, int row, int col, float matrix[row][col]);
+void scalar_multiplication(float scalar, int row, int col, float input[row][col], float output[row][col]);
+
+void matrix_multiplication(float inverse[3][3], float constants[3], float solution[3]);
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]);
 
@@ -115,7 +117,7 @@ struct Vector get_vector(struct Object p, struct Object q) {
     a.x_component = p.x - q.x;
     a.y_component = p.y - q.y;
     a.z_component = p.z - q.z;
-    return a;
+    return a; 
 }
 
 void print_vector(struct Vector a, char front, char back) {
@@ -136,10 +138,19 @@ void print_solution(float x, float y, float z) {
     printf("===============================================\n");
 }
 
-void scalar_multiplication(float scalar, int row, int col, float matrix[row][col]) {
+void scalar_multiplication(float scalar, int row, int col, float input[row][col], float output[row][col]) {
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
-            matrix[i][j] *= scalar;
+            output[i][j] = input[i][j] * scalar;
+        }
+    }
+}
+
+void matrix_multiplication(float inverse[3][3], float constants[3], float solution[3]) {
+    for (int i = 0; i < 3; i++) {
+        solution[i] = 0;
+        for (int j = 0; j < 3; j++) {
+            solution[i] += inverse[i][j] * constants[j];
         }
     }
 }
@@ -432,6 +443,7 @@ void inverse() {
     float coefficients[3][3], constants[3];
     float determinant, determinants[3];
     float cofactor_matrix[3][3], adjoint[3][3];
+    float inverse[3][3], solution[3];
 
     printf("Here are the equations:\n");
     for (int i = 0; i < 3; i++) {
@@ -492,11 +504,10 @@ void inverse() {
         printf("\n");
     }
     printf("===============================================\n");
-    // inverse = 1/det (adjoint A)
-    // matrix scalar multiplication
-    // AX = B
-    // X = A-1 B
-    // matrix multiplication
+
+    scalar_multiplication(1/determinant, 3, 3, adjoint, inverse);
+    matrix_multiplication(inverse, constants, solution);
+    print_solution(solution[0], solution[1], solution[2]);
 }
 
 void dot_product() {
