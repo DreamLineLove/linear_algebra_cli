@@ -34,6 +34,8 @@ void gauss_jordan_elimination();
 
 float determinant_calculation(int called_in_main, float matrix[3][3]);
 
+void cramers_rule();
+
 void dot_product();
 
 void cross_product();
@@ -67,6 +69,9 @@ int main(void) {
             break;
             case 3:
             determinant_calculation(1, matrix);
+            break;
+            case 4:
+            cramers_rule();
             break;
             case 6:
             dot_product();
@@ -348,6 +353,62 @@ float determinant_calculation(int called_in_main, float minor[3][3]) {
         printf("===============================================\n");
     }
     return determinant;
+}
+
+void cramers_rule() {
+
+    float equations[3][4];
+    input_three_equations(equations);
+    char variable_matrix[3] = {'x', 'y', 'z'};
+    float coefficients[3][3];
+    float constants[3];
+    float determinant;
+    float determinants[3];
+
+    printf("Here are the equations:\n");
+    for (int i = 0; i < 3; i++) {
+        int j, count = 0;
+        for (j = 0; j < 3; j++) {
+            coefficients[i][j] = equations[i][j];
+            if (equations[i][j] != 0) {
+                if (count != 0 && equations[i][j] > 0) printf("+");
+                if (equations[i][j] != 1) { 
+                    printf("%.1f", equations[i][j]);
+                }
+                count++;
+                printf("%c", variable_matrix[j]);
+            }
+        }
+        printf(" = %.1f\n", equations[i][j]);
+        constants[i] = equations[i][j];
+    }
+    determinant = determinant_calculation(0, coefficients);
+    printf("===============================================\n");
+
+    for (int i = 0; i < 3; i++) {
+        float Ai[3][3];
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
+                if (k != i) {
+                    Ai[j][k] = coefficients[j][k];
+                } else Ai[j][k] = constants[j];
+            }
+        }
+        determinants[i] = determinant_calculation(0, Ai);
+    }
+
+    printf("Here are the determinant of each variable:\n");
+    printf("|A| = %.2f\n", determinant);
+    for (int i = 0; i < 3; i++) {
+        printf("|%c| = %.2f\n", variable_matrix[i], determinants[i]);
+    }
+    printf("===============================================\n");
+
+    float x, y, z;
+    x = determinants[0] / determinant;
+    y = determinants[1] / determinant;
+    z = determinants[2] / determinant;
+    print_solution(x, y, z);
 }
 
 void dot_product() {
