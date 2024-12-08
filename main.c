@@ -26,7 +26,7 @@ void input_three_equations(float e[3][4]);
 
 void print_solution(float x, float y, float z);
 
-float cofactor(int i, int j, float matrix[2][2]);
+void scalar_multiplication(float scalar, int row, int col, float matrix[row][col]);
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]);
 
@@ -34,7 +34,7 @@ void gaussian_elimination(float output[3][4], int called_in_main);
 
 void gauss_jordan_elimination();
 
-float determinant_calculation(int called_in_main, float matrix[3][3]);
+float determinant_calculation(int called_in_main, int m_order, float matrix[m_order][m_order]);
 
 void cramers_rule();
 
@@ -72,7 +72,7 @@ int main(void) {
             gauss_jordan_elimination();
             break;
             case 3:
-            determinant_calculation(1, matrix);
+            determinant_calculation(1, 4, matrix);
             break;
             case 4:
             cramers_rule();
@@ -136,12 +136,12 @@ void print_solution(float x, float y, float z) {
     printf("===============================================\n");
 }
 
-float cofactor(int i, int j, float matrix[2][2]) {
-    float main_diagonal = matrix[0][0] * matrix[1][1];
-    float other_diagonal = -(matrix[0][1] * matrix[1][0]);
-    float determinant = main_diagonal + other_diagonal;
-    float multiple = pow(-1, ((i+1)+(j+1)));
-    return multiple * determinant;
+void scalar_multiplication(float scalar, int row, int col, float matrix[row][col]) {
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            matrix[i][j] *= scalar;
+        }
+    }
 }
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]) {
@@ -291,13 +291,13 @@ void gauss_jordan_elimination() {
     print_solution(equations[0][3], equations[1][3], equations[2][3]);
 }
 
-float determinant_calculation(int called_in_main, float minor[3][3]) {
+float determinant_calculation(int called_in_main, int m_order, float minor[m_order][m_order]) {
     int order;
     if (called_in_main) {
         printf("Please input size of matrix (1-4): ");
         scanf("%d", &order);
     } else {
-        order = 3;
+        order = m_order;
     }
     float determinant;
 
@@ -332,13 +332,13 @@ float determinant_calculation(int called_in_main, float minor[3][3]) {
         }
         if (order == 4) {
             float cofactors[4];
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < order; i++) {
                 float multiple = (i % 2 == 0) ? 1.0 : -1.0;
                 float minor[3][3];
                 int l = 0, m = 0;
-                for (int j = 0; j < 4; j++) {
+                for (int j = 0; j < order; j++) {
                     if (j == 0) continue;
-                    for (int k = 0; k < 4; k++) {
+                    for (int k = 0; k < order; k++) {
                         if (k == i) continue;
                         minor[l][m] = matrix[j][k];
                         m++;
@@ -346,7 +346,7 @@ float determinant_calculation(int called_in_main, float minor[3][3]) {
                     l++;
                     m=0;
                 }
-                cofactors[i] = matrix[0][i] * multiple * determinant_calculation(0, minor);
+                cofactors[i] = matrix[0][i] * multiple * determinant_calculation(0, 3, minor);
             }
             determinant = 0;
             for (int i = 0; i < 4; i++) {
@@ -395,7 +395,7 @@ void cramers_rule() {
         printf(" = %.1f\n", equations[i][j]);
         constants[i] = equations[i][j];
     }
-    determinant = determinant_calculation(0, coefficients);
+    determinant = determinant_calculation(0, 3, coefficients);
     printf("===============================================\n");
 
     for (int i = 0; i < 3; i++) {
@@ -407,7 +407,7 @@ void cramers_rule() {
                 } else Ai[j][k] = constants[j];
             }
         }
-        determinants[i] = determinant_calculation(0, Ai);
+        determinants[i] = determinant_calculation(0, 3, Ai);
     }
 
     printf("Here are the determinant of each variable:\n");
@@ -451,7 +451,7 @@ void inverse() {
         constants[i] = equations[i][j];
     }
 
-    determinant = determinant_calculation(0, coefficients);
+    determinant = determinant_calculation(0, 3, coefficients);
     printf("Here is the determinant of A:\n");
     printf("|A| = %.2f\n", determinant);
     printf("===============================================\n");
@@ -471,7 +471,8 @@ void inverse() {
                 m++;
                 n=0;
             }
-            cofactor_matrix[i][j] = cofactor(i, j, minor);
+            float multiple = pow(-1, ((i+1)+(j+1)));
+            cofactor_matrix[i][j] = multiple * determinant_calculation(0, 2, minor);
             printf("%.2f ", cofactor_matrix[i][j]);
         }
         printf("\n");
