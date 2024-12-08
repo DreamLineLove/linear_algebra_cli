@@ -26,6 +26,8 @@ void input_three_equations(float e[3][4]);
 
 void print_solution(float x, float y, float z);
 
+float cofactor(int i, int j, float matrix[2][2]);
+
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]);
 
 void gaussian_elimination(float output[3][4], int called_in_main);
@@ -35,6 +37,8 @@ void gauss_jordan_elimination();
 float determinant_calculation(int called_in_main, float matrix[3][3]);
 
 void cramers_rule();
+
+void inverse();
 
 void dot_product();
 
@@ -72,6 +76,9 @@ int main(void) {
             break;
             case 4:
             cramers_rule();
+            break;
+            case 5:
+            inverse();
             break;
             case 6:
             dot_product();
@@ -127,6 +134,14 @@ void print_solution(float x, float y, float z) {
     printf("Here is the solution of these equations:\n");
     printf("(x,y,z) = (%.1f,%.1f,%.1f)\n", x, y, z);
     printf("===============================================\n");
+}
+
+float cofactor(int i, int j, float matrix[2][2]) {
+    float main_diagonal = matrix[0][0] * matrix[1][1];
+    float other_diagonal = -(matrix[0][1] * matrix[1][0]);
+    float determinant = main_diagonal + other_diagonal;
+    float multiple = pow(-1, ((i+1)+(j+1)));
+    return multiple * determinant;
 }
 
 void choose_option(int *first_time, int *option, char options[N_OPTIONS][MAX_STR]) {
@@ -360,10 +375,8 @@ void cramers_rule() {
     float equations[3][4];
     input_three_equations(equations);
     char variable_matrix[3] = {'x', 'y', 'z'};
-    float coefficients[3][3];
-    float constants[3];
-    float determinant;
-    float determinants[3];
+    float coefficients[3][3], constants[3];
+    float determinant, determinants[3];
 
     printf("Here are the equations:\n");
     for (int i = 0; i < 3; i++) {
@@ -409,6 +422,80 @@ void cramers_rule() {
     y = determinants[1] / determinant;
     z = determinants[2] / determinant;
     print_solution(x, y, z);
+}
+
+void inverse() {
+
+    float equations[3][4];
+    input_three_equations(equations);
+    char variable_matrix[3] = {'x', 'y', 'z'};
+    float coefficients[3][3], constants[3];
+    float determinant, determinants[3];
+    float cofactor_matrix[3][3], adjoint[3][3];
+
+    printf("Here are the equations:\n");
+    for (int i = 0; i < 3; i++) {
+        int j, count = 0;
+        for (j = 0; j < 3; j++) {
+            coefficients[i][j] = equations[i][j];
+            if (equations[i][j] != 0) {
+                if (count != 0 && equations[i][j] > 0) printf("+");
+                if (equations[i][j] != 1) { 
+                    printf("%.1f", equations[i][j]);
+                }
+                count++;
+                printf("%c", variable_matrix[j]);
+            }
+        }
+        printf(" = %.1f\n", equations[i][j]);
+        constants[i] = equations[i][j];
+    }
+
+    determinant = determinant_calculation(0, coefficients);
+    printf("Here is the determinant of A:\n");
+    printf("|A| = %.2f\n", determinant);
+    printf("===============================================\n");
+
+    printf("Here is the cofactor of A:\n");
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            float minor[2][2];
+            int m = 0, n = 0;
+            for (int k = 0; k < 3; k++) {
+                if (k == i) continue;
+                for (int l = 0; l < 3; l++) {
+                    if (l == j) continue;
+                    minor[m][n] = coefficients[k][l];
+                    n++;
+                }
+                m++;
+                n=0;
+            }
+            cofactor_matrix[i][j] = cofactor(i, j, minor);
+            printf("%.2f ", cofactor_matrix[i][j]);
+        }
+        printf("\n");
+    }
+    printf("===============================================\n");
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            adjoint[j][i] = cofactor_matrix[i][j];
+        }
+    }
+    printf("Here is the adjoint of A:\n");
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            printf("%.2f ", adjoint[i][j]);
+        }
+        printf("\n");
+    }
+    printf("===============================================\n");
+    // inverse = 1/det (adjoint A)
+    // matrix scalar multiplication
+    // AX = B
+    // X = A-1 B
+    // matrix multiplication
 }
 
 void dot_product() {
